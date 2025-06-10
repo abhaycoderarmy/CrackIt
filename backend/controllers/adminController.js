@@ -1,80 +1,4 @@
-// // controllers/adminController.js
-// import { User } from '../models/user.model.js';
 
-// import Newsletter from '../models/newsletter.model.js';
-// import nodemailer from 'nodemailer';
-
-// export const getAllUsers = async (req, res) => {
-//   try {
-//     console.log("Fetching users...");
-//     const users = await User.find({}, '-password');
-//     res.status(200).json({ success: true, users });
-//   } catch (err) {
-//     console.error("Error fetching users:", err);
-//     res.status(500).json({ success: false, message: err.message });
-//   }
-// };
-
-
-// export const updateUserStatus = async (req, res) => {
-//   try {
-//     const { status } = req.body;
-//     const user = await User.findByIdAndUpdate(req.params.id, { status }, { new: true });
-//     res.status(200).json({ success: true, user });
-//   } catch (err) {
-//     res.status(500).json({ success: false, message: err.message });
-//   }
-// };
-
-// export const getAllNewsletters = async (req, res) => {
-//   try {
-//     const newsletters = await Newsletter.find();
-//     res.status(200).json({ success: true, newsletters });
-//   } catch (err) {
-//     res.status(500).json({ success: false, message: err.message });
-//   }
-// };
-
-// export const toggleNewsletterStatus = async (req, res) => {
-//   try {
-//     const { status } = req.body;
-//     const newsletter = await Newsletter.findByIdAndUpdate(req.params.id, { status }, { new: true });
-//     res.status(200).json({ success: true, newsletter });
-//   } catch (err) {
-//     res.status(500).json({ success: false, message: err.message });
-//   }
-// };
-
-// export const sendEmail = async (req, res) => {
-//   const { to, content } = req.body;
-//   if (!to || !content) {
-//     return res.status(400).json({ success: false, message: "Missing email or content." });
-//   }
-
-//   const transporter = nodemailer.createTransport({
-//     host: process.env.SMTP_HOST,
-//     port: process.env.SMTP_PORT,
-//     secure: false,
-//     auth: {
-//       user: process.env.EMAIL_USER,
-//       pass: process.env.EMAIL_PASS
-//     }
-//   });
-
-//   const mailOptions = {
-//     from: process.env.EMAIL_FROM,
-//     to,
-//     subject: 'Message from Admin',
-//     text: content
-//   };
-
-//   try {
-//     await transporter.sendMail(mailOptions);
-//     return res.status(200).json({ success: true, message: 'Email sent successfully.' });
-//   } catch (error) {
-//     return res.status(500).json({ success: false, message: 'Email failed.', error: error.message });
-//   }
-// };
 // controllers/adminController.js
 import { User } from '../models/user.model.js';
 import { Company } from '../models/company.model.js';
@@ -82,28 +6,42 @@ import { Job } from '../models/job.model.js';
 import Newsletter from '../models/newsletter.model.js';
 import nodemailer from 'nodemailer';
 
+
+
+// GET all users (admin)
 export const getAllUsers = async (req, res) => {
   try {
-    console.log("Fetching users...");
-    console.log("User making request:", req.user);
-    
-    // Check if user is admin
-    if (!req.user || req.user.role !== 'admin') {
-      return res.status(403).json({ 
-        success: false, 
-        message: 'Access denied. Admin role required.' 
-      });
-    }
-    
-    const users = await User.find({}, '-password');
-    console.log(`Found ${users.length} users`);
-    
-    res.status(200).json({ success: true, users });
-  } catch (err) {
-    console.error("Error fetching users:", err);
-    res.status(500).json({ success: false, message: err.message });
+    const users = await User.find().populate('profile.company');
+    return res.status(200).json({ success: true, users });
+  } catch (error) {
+    console.error("Admin getAllUsers error:", error);
+    return res.status(500).json({ success: false, message: "Failed to fetch users." });
   }
 };
+
+export const toggleUserVisibility = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ success: false, message: "User not found." });
+
+    // Toggle status
+    user.status = user.status === "active" ? "blocked" : "active";
+    await user.save();
+
+    return res.status(200).json({
+      success: true,
+      message: `User status updated to ${user.status}.`,
+      user
+    });
+  } catch (error) {
+    console.error("toggleUserVisibility error:", error);
+    return res.status(500).json({ success: false, message: "Failed to update user status." });
+  }
+};
+
+
 
 export const getAllCompanies = async (req, res) => {
   try {
@@ -278,7 +216,7 @@ export const sendEmail = async (req, res) => {
       });
     }
 
-    const transporter = nodemailer.createTransporter({
+    const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST,
       port: process.env.SMTP_PORT || 587,
       secure: false,
@@ -311,3 +249,81 @@ export const sendEmail = async (req, res) => {
     });
   }
 };
+
+export const getAdminJobManagement = async (req, res) => {
+    try {
+        console.log("Fetching admin job management data...");
+        
+        // Make sure to populate applications with user/applicant data
+        const jobs = await Job.find()
+            .populate({
+                path: 'company',
+                select: 'name'
+            })
+            .populate({
+                path: 'applications',
+                populate: {
+                    path: 'applicant', // or 'user' depending on your schema
+                    select: 'fullname name email phoneNumber profile role createdAt updatedAt',
+                    populate: {
+                        path: 'profile',
+                        select: 'bio skills resume resumeOriginalName profilePhoto company'
+                    }
+                }
+            })
+            .sort({ createdAt: -1 });
+
+        console.log("Jobs fetched:", jobs.length);
+        
+        return res.status(200).json({
+            success: true,
+            jobs
+        });
+    } catch (error) {
+        console.error("Error in getAdminJobManagement:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Server error: " + error.message
+        });
+    }
+};
+
+
+export const getAdminOwnJobs = async (req, res) => {
+  try {
+    const adminId = req.id;
+    console.log("Fetching jobs created by admin:", adminId);
+    
+    const jobs = await Job.find({ created_by: adminId })
+      .populate('company', 'name')
+      .populate({
+        path: 'applications',
+        populate: { 
+          path: 'applicant',
+          select: 'fullname email profile.resume'
+        }
+      })
+      .sort({ createdAt: -1 });
+
+    if (!jobs || jobs.length === 0) {
+      return res.status(200).json({
+        message: "No jobs found.",
+        success: true,
+        jobs: []
+      });
+    }
+
+    return res.status(200).json({
+      jobs,
+      success: true,
+      message: "Admin jobs fetched successfully"
+    });
+  } catch (error) {
+    console.error("Error fetching admin jobs:", error);
+    return res.status(500).json({
+      message: "Server error while fetching jobs.",
+      success: false,
+      error: error.message
+    });
+  }
+}

@@ -42,6 +42,11 @@ const jobSchema = new mongoose.Schema({
         ref: 'User',
         required: true
     },
+    visibility: {
+  type: String,
+  enum: ['public', 'private'],
+  default: 'public'
+},
     applications: [
         {
             type: mongoose.Schema.Types.ObjectId,

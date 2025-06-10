@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { BookOpen, Calendar, User, Lock, ArrowRight, TrendingUp, X, ChevronLeft, ChevronRight, Zap, Star, Award, Globe } from 'lucide-react';
+import Footer from './shared/Footer';
 
 const NewsletterModal = ({ newsletter, isOpen, onClose }) => {
   if (!isOpen || !newsletter) return null;
@@ -207,9 +208,9 @@ const NewsletterSection = () => {
   const [showAll, setShowAll] = useState(false);
 
   // API Configuration
-  const API_BASE_URL = process.env.NODE_ENV === 'production' 
-    ? 'https://your-production-api.com/api/v1'
-    : 'http://localhost:8000/api/v1';
+const API_BASE_URL = import.meta.env.VITE_BACKEND_URL 
+  ? `${import.meta.env.VITE_BACKEND_URL}/api/v1`
+  : 'http://localhost:9000/api/v1'; 
 
   useEffect(() => {
     fetchNewsletters();

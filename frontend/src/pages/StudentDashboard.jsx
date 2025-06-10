@@ -57,7 +57,7 @@ const StudentDashboard = () => {
   });
 
   // API base URL
-  const API_BASE_URL = 'http://localhost:8000/api/v1';
+  const API_BASE_URL = `${import.meta.env.VITE_BACKEND_URL}/api/v1`;
 
   // Fetch data from APIs
   useEffect(() => {

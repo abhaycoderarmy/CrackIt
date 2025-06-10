@@ -34,6 +34,8 @@ const Login = () => {
 
       if (res.data.success) {
         dispatch(setUser(res.data.user));
+        localStorage.setItem("token", res.data.token);
+
         console.log("User after login:", res.data.user);
 
         const role = res.data.user.role;

@@ -59,14 +59,14 @@ const Footer = () => {
     if (user?.role === 'admin') {
       return [
         ...baseLinks,
-        { to: '/admin/dashboard', label: 'Dashboard', icon: <LayoutDashboard className="w-4 h-4" /> },
-        { to: '/admin/jobs', label: 'Manage Jobs', icon: <Search className="w-4 h-4" /> },
-        { to: '/admin/companies', label: 'Companies', icon: <Building className="w-4 h-4" /> },
+        // { to: '/admin/dashboard', label: 'Dashboard', icon: <LayoutDashboard className="w-4 h-4" /> },
+        { to: '/admin/job-management', label: 'Manage Jobs', icon: <Search className="w-4 h-4" /> },
+        // { to: '/admin/companies', label: 'Companies', icon: <Building className="w-4 h-4" /> },
         { to: '/admin/users', label: 'Users', icon: <Users className="w-4 h-4" /> },
       ];
     } else if (user?.role === 'recruiter') {
       return [
-         { to: '/recruiter/dashboard', label: 'Home', icon: <Home className="w-4 h-4" /> },
+         {to: '/recruiter/dashboard', label: 'Home', icon: <Home className="w-4 h-4" /> },
         { to: '/admin/companies', label: 'My Companies', icon: <Briefcase className="w-4 h-4" /> },
         { to: '/admin/jobs', label: 'Post Jobs', icon: <Search className="w-4 h-4" /> },
       ];
@@ -74,8 +74,8 @@ const Footer = () => {
       return [
         ...baseLinks,
         { to: '/jobs', label: 'Find Jobs', icon: <Search className="w-4 h-4" /> },
-        { to: '/browse', label: 'Browse', icon: <Globe className="w-4 h-4" /> },
-        { to: '/learn', label: 'Learn', icon: <BookOpen className="w-4 h-4" /> },
+        // { to: '/browse', label: 'Browse', icon: <Globe className="w-4 h-4" /> },
+        // { to: '/learn', label: 'Learn', icon: <BookOpen className="w-4 h-4" /> },
       ];
     } else {
       return [

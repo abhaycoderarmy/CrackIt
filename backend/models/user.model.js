@@ -36,6 +36,11 @@ const userSchema = new mongoose.Schema(
       enum: ["active", "blocked"],
       default: "active",
     },
+    isPublic: {
+      type: Boolean,
+      default: true, // default visibility
+    },
+
     token: { type: String },
 
     profile: {

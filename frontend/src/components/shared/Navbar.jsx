@@ -56,9 +56,8 @@ const Navbar = () => {
     if (user?.role === 'admin') {
         navLinks = [
             { to: '/', label: 'Home', icon: <Home className="w-4 h-4" /> },
-            { to: '/admin/dashboard', label: 'Dashboard', icon: <LayoutDashboard className="w-4 h-4" /> },
-            { to: '/admin/jobs', label: 'Jobs', icon: <Search className="w-4 h-4" /> },
-            { to: '/admin/companies', label: 'Companies', icon: <Building className="w-4 h-4" /> },
+            // { to: '/admin/dashboard', label: 'Dashboard', icon: <LayoutDashboard className="w-4 h-4" /> },
+            { to: '/admin/job-management', label: 'Jobs', icon: <Search className="w-4 h-4" /> },
             { to: '/admin/users', label: 'Users', icon: <Users className="w-4 h-4" /> },
             { to: '/newsletter', label: 'Newsletter', icon: <Newspaper className="w-4 h-4" />, highlight: true },
         ];
@@ -73,7 +72,7 @@ const Navbar = () => {
         navLinks = [
             { to: '/student/dashboard', label: 'Home', icon: <Home className="w-4 h-4" /> },
             { to: '/jobs', label: 'Find Jobs', icon: <Search className="w-4 h-4" /> },
-            { to: '/learn', label: 'Learn', icon: <BookOpen className="w-4 h-4" /> },
+            // { to: '/learn', label: 'Learn', icon: <BookOpen className="w-4 h-4" /> },
             { to: '/newsletter', label: 'Newsletter', icon: <Newspaper className="w-4 h-4" />, highlight: true },
         ];
     } else {

@@ -43,7 +43,11 @@ const RecruiterDashboard = () => {
   const [error, setError] = useState(null);
 
   // API base URL - adjust according to your backend
-  const API_BASE_URL = 'http://localhost:8000/api/v1';
+  // const API_BASE_URL = 'http://localhost:8000/api/v1';
+
+  const API_BASE_URL = import.meta.env.VITE_BACKEND_URL 
+  ? `${import.meta.env.VITE_BACKEND_URL}/api/v1`
+  : 'http://localhost:9000/api/v1'; // fallback
 
   // Navigation helper with multiple route attempts and debugging
   const safeNavigate = (routes, description, id = null) => {

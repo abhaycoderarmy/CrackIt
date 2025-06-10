@@ -7,13 +7,23 @@ import {
   getAllUsers,
   sendOtp,
   verifyOtp,
-  resetPassword
+  resetPassword,
+  getAllUsersForAdmin,
+  getUserProfile
 } from "../controllers/user.controller.js";
 import isAuthenticated from "../middlewares/isAuthenticated.js";
 import { isAdmin } from "../middlewares/isAdmin.js"; // <-- admin middleware
 import { singleUpload } from "../middlewares/mutler.js";
 
 const router = express.Router();
+// 
+
+// Route to get user profile by ID (admin only)
+router.route('/users/:id').get(isAuthenticated, isAdmin, getUserProfile);
+
+// Route to get all users (admin only)
+router.route('/users').get(isAuthenticated, isAdmin, getAllUsersForAdmin);
+
 
 router.route("/register").post(singleUpload, register);
 router.route("/login").post(login);

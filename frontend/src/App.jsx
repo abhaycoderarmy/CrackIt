@@ -21,6 +21,9 @@ import NewsletterPage from './pages/NewsLetterPage'
 import RecruiterDashboard from './components/recruiter/RecruiterDashboard'
 import StudentDashboard from './pages/StudentDashboard'
 import ForgotPassword from './components/auth/ForgotPassword'
+import AdminUserManagement from './pages/AdminUserManagement'
+import AdminJobManagement from './pages/AdminJobManagement'
+// import EditJob from './pages/EditJob'
 
 
 
@@ -101,7 +104,22 @@ const appRouter = createBrowserRouter([
 {
   path:"/admin/dashboard",
   element:<AdminProtectedRoute><AdminDashboard /></AdminProtectedRoute>
-}
+},
+{
+  path: "/admin/users",
+  element: <AdminProtectedRoute><AdminUserManagement /></AdminProtectedRoute>
+},
+{
+  path: "/admin/job-management",
+  element: <AdminJobManagement />
+},
+// {
+//   path: "/admin/edit-job/:id",
+//   element: <EditJob />
+// }
+
+
+
 
 
 ])

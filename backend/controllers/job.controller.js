@@ -101,10 +101,71 @@ export const getAdminJobs = async (req, res) => {
     }
 }
 
+// export const updateJob = async (req, res) => {
+//   try {
+//     const jobId = req.params.id;
+//     const userId = req.id;
+//     const {
+//       title,
+//       description,
+//       requirements,
+//       salary,
+//       location,
+//       jobType,
+//       experience,
+//       position,
+//       companyId,
+//     } = req.body;
+
+//     if (!title || !description || !requirements || !salary || !location || !jobType || !experience || !position || !companyId) {
+//       return res.status(400).json({
+//         message: "Some fields are missing.",
+//         success: false,
+//       });
+//     }
+
+//     const job = await Job.findOne({ _id: jobId, created_by: userId });
+
+//     if (!job) {
+//       return res.status(404).json({
+//         message: "Job not found or you are not authorized to update it.",
+//         success: false,
+//       });
+//     }
+
+//     job.title = title;
+//     job.description = description;
+//     job.requirements = typeof requirements === "string" ? requirements.split(",") : requirements;
+//     job.salary = Number(salary);
+//     job.experienceLevel = experience;
+//     job.location = location;
+//     job.jobType = jobType;
+//     job.position = Number(position);
+//     job.company = companyId;
+
+//     await job.save();
+
+//     return res.status(200).json({
+//       message: "Job updated successfully.",
+//       job,
+//       success: true,
+//     });
+//   } catch (error) {
+//     console.error("Update job error:", error);
+//     return res.status(500).json({
+//       message: "Server error.",
+//       success: false,
+//     });
+//   }
+// };
+// Delete job by admin
+
 export const updateJob = async (req, res) => {
   try {
     const jobId = req.params.id;
     const userId = req.id;
+    const userRole = req.user?.role; // Make sure you're getting user role from middleware
+    
     const {
       title,
       description,
@@ -124,7 +185,15 @@ export const updateJob = async (req, res) => {
       });
     }
 
-    const job = await Job.findOne({ _id: jobId, created_by: userId });
+    // FIXED: Check if user is admin OR job creator
+    let job;
+    if (userRole === 'admin') {
+      // Admin can update any job
+      job = await Job.findById(jobId);
+    } else {
+      // Non-admin can only update their own jobs
+      job = await Job.findOne({ _id: jobId, created_by: userId });
+    }
 
     if (!job) {
       return res.status(404).json({
@@ -158,13 +227,49 @@ export const updateJob = async (req, res) => {
     });
   }
 };
-// Delete job by admin
+// export const deleteJob = async (req, res) => {
+//   try {
+//     const jobId = req.params.id;
+//     const userId = req.id;
+
+//     const job = await Job.findOne({ _id: jobId, created_by: userId });
+
+//     if (!job) {
+//       return res.status(404).json({
+//         message: "Job not found or you are not authorized to delete it.",
+//         success: false,
+//       });
+//     }
+
+//     await job.deleteOne();
+
+//     return res.status(200).json({
+//       message: "Job deleted successfully.",
+//       success: true,
+//     });
+//   } catch (error) {
+//     console.error("Delete job error:", error);
+//     return res.status(500).json({
+//       message: "Server error.",
+//       success: false,
+//     });
+//   }
+// };
 export const deleteJob = async (req, res) => {
   try {
     const jobId = req.params.id;
     const userId = req.id;
+    const userRole = req.user?.role; // Make sure you're getting user role from middleware
 
-    const job = await Job.findOne({ _id: jobId, created_by: userId });
+    // FIXED: Check if user is admin OR job creator
+    let job;
+    if (userRole === 'admin') {
+      // Admin can delete any job
+      job = await Job.findById(jobId);
+    } else {
+      // Non-admin can only delete their own jobs
+      job = await Job.findOne({ _id: jobId, created_by: userId });
+    }
 
     if (!job) {
       return res.status(404).json({
@@ -187,5 +292,4 @@ export const deleteJob = async (req, res) => {
     });
   }
 };
-
 

@@ -33,14 +33,15 @@ import {
   Clock,
   Heart
 } from 'lucide-react';
+import Footer from '@/components/shared/Footer';
 
 // Use your existing API configuration
 const config = {
   development: {
-    API_BASE_URL: "http://localhost:8000/api/v1"
+    API_BASE_URL: `${import.meta.env.VITE_BACKEND_URL}/api/v1`
   },
   production: {
-    API_BASE_URL: "https://your-production-api.com/api/v1"
+    API_BASE_URL: `${import.meta.env.VITE_BACKEND_URL}/api/v1`
   }
 };
 
@@ -973,6 +974,7 @@ const NewsletterPage = () => {
           )}
         </div>
       </div>
+      <Footer />
     </div>
   );
 };

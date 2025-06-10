@@ -364,3 +364,54 @@ export const resetPassword = async (req, res) => {
     res.status(500).json({ success: false, message: "Server error" });
   }
 };
+
+export const getUserProfile = async (req, res) => {
+    try {
+        const userId = req.params.id;
+        console.log("Fetching user profile for ID:", userId);
+        
+        // Find user by ID and exclude password, populate profile if needed
+        const user = await User.findById(userId)
+            .select('-password')
+            .populate('profile'); // Add this if profile is a separate model
+        
+        if (!user) {
+            return res.status(404).json({
+                message: "User not found.",
+                success: false
+            });
+        }
+
+        console.log("User found:", user);
+
+        return res.status(200).json({
+            user,
+            success: true
+        });
+    } catch (error) {
+        console.log("Error fetching user profile:", error);
+        return res.status(500).json({
+            message: "Server error: " + error.message,
+            success: false
+        });
+    }
+};
+export const getAllUsersForAdmin = async (req, res) => {
+    try {
+        const users = await User.find()
+            .select('-password')
+            .populate('profile') // Add this if profile is a separate model
+            .sort({ createdAt: -1 });
+        
+        return res.status(200).json({
+            users,
+            success: true
+        });
+    } catch (error) {
+        console.log("Error fetching users:", error);
+        return res.status(500).json({
+            message: "Server error: " + error.message,
+            success: false
+        });
+    }
+};
